@@ -1,0 +1,31 @@
+club-registration-system/
+├── package.json
+├── vite.config.ts
+├── tsconfig.json
+├── tsconfig.node.json
+├── tailwind.config.js
+├── postcss.config.js
+├── index.html
+└── src/
+    ├── main.tsx
+    ├── index.css
+    ├── App.tsx
+    ├── types/
+    │   └── index.ts
+    ├── lib/
+    │   ├── utils.ts
+    │   ├── helpers.ts
+    │   └── data.ts
+    └── components/
+        ├── LoginPage.tsx
+        ├── RegisterPage.tsx
+        ├── Dashboard.tsx
+        ├── Header.tsx
+        ├── Sidebar.tsx
+        ├── ClubRegistration.tsx
+        ├── RegisteredClubs.tsx
+        ├── Certificates.tsx
+        ├── Reports.tsx
+        ├── Administration.tsx
+        ├── Security.tsx
+        └── System.tsx

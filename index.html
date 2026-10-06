@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Registration Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f0fdf4;
+            min-height: 100vh;
+        }
+        .hidden { display: none !important; }
+        
+        /* Auth Pages */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+            padding: 20px;
+        }
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .auth-logo h1 {
+            color: #064e3b;
+            font-size: 24px;
+            margin-top: 10px;
+        }
+        .auth-logo p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #059669;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #047857;
+        }
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        .btn-danger {
+            background: #dc2626;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 12px;
+            width: auto;
+        }
+        .auth-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .auth-link a {
+            color: #059669;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+        .error-msg {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .success-msg {
+            background: #f0fdf4;
+            color: #059669;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Main Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 260px;
+            background: #064e3b;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s;
+            z-index: 99;
+        }
+        .sidebar-header {
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        .sidebar-header h2 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .sidebar-header p {
+            font-size: 11px;
+            color: #a7f3d0;
+        }
+        .menu-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+            font-size: 13px;
+        }
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .menu-item.active {
+            background: #059669;
+        }
+        .menu-section {
+            font-size: 11px;
+            color: #a7f3d0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 12px 5px;
+            font-weight: 600;
+        }
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .header h1 {
+            color: #064e3b;
+            font-size: 20px;
+        }
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-info .avatar {
+            width: 40px;
+            height: 40px;
+            background: #059669;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        .logout-btn {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .logout-btn:hover {
+            background: #fecaca;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 15px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .stat-card h3 {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #374151;
+        }
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #111827;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .modal-actions .btn {
+            flex: 1;
+        }
+
+        /* File upload */
+        .file-upload {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .file-upload:hover {
+            border-color: #059669;
+        }
+        .file-upload input {
+            display: none;
+        }
+        .file-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        /* Mobile responsive */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: #064e3b;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding-top: 60px;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 2000;
+            animation: slideIn 0.3s;
+        }
+        .toast.success {
+            background: #059669;
+        }
+        .toast.error {
+            background: #dc2626;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Role badges */
+        .role-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .role-admin { background: #dc2626; color: white; }
+        .role-registrar { background: #059669; color: white; }
+        .role-director { background: #7c3aed; color: white; }
+        .role-planner { background: #2563eb; color: white; }
+        .role-accounts { background: #d97706; color: white; }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-size: 18px;
+            color: #059669;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #059669;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="loading">
+            <div class="spinner"></div>
+            Loading system...
+        </div>
+    </div>
+
+    <script>
+        // ============ CLOUD DATABASE CONFIGURATION ============
+        // Using a free cloud database service (JSONBin.io)
+        // You need to create a free account at https://jsonbin.io and get your API key
+        const API_KEY = 'YOUR_JSONBIN_API_KEY'; // Replace with your actual API key
+        const BIN_ID = 'YOUR_BIN_ID'; // Replace with your bin ID after creating one
+        
+        // For demo purposes, we'll use localStorage as fallback
+        // To enable cloud sync, replace the API_KEY and BIN_ID above
+        
+        const DB_KEY = 'club_registration_db';
+        
+        const defaultData = {
+            users: [
+                {
+                    id: 'USR-000001',
+                    fullName: 'System Administrator',
+                    username: 'admin',
+                    password: 'admin123',
+                    phone: '0977123456',
+                    district: 'CHEMBE',
+                    localAuthority: 'CHEMBE TOWN COUNCIL',
+                    role: 'ADMINISTRATOR',
+                    status: 'ACTIVE',
+                    createdAt: new Date().toISOString()
+                }
+            ],
+            clubs: [],
+            members: [],
+            auditLogs: [],
+            certificateCounter: 2080,
+            settings: {
+                systemName: 'CLUB REGISTRATION MANAGEMENT SYSTEM',
+                allowRegistration: true,
+                requirePaymentProof: true
+            },
+            districtConfigs: [
+                { district: 'CHEMBE', localAuthority: 'CHEMBE TOWN COUNCIL' },
+                { district: 'KASAMA', localAuthority: 'KASAMA MUNICIPAL COUNCIL' },
+                { district: 'MPIKA', localAuthority: 'MPIKA TOWN COUNCIL' },
+                { district: 'CHINSALI', localAuthority: 'CHINSALI TOWN COUNCIL' },
+                { district: 'LUNDAZI', localAuthority: 'LUNDAZI TOWN COUNCIL' }
+            ]
+        };
+
+        // ============ DATABASE FUNCTIONS ============
+        let db = null;
+        let currentUser = null;
+        let currentPage = 'dashboard';
+        let isCloudEnabled = false;
+
+        async function loadDB() {
+            // Try cloud first
+            if (API_KEY !== 'YOUR_JSONBIN_API_KEY' && BIN_ID !== 'YOUR_BIN_ID') {
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                        headers: {
+                            'X-Master-Key': API_KEY
+                        }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        db = data.record;
+                        isCloudEnabled = true;
+                        return;
+                    }
+                } catch (e) {
+                    console.log('Cloud sync failed, using local storage');
+                }
+            }
+            
+            // Fallback to local storage
+            try {
+                const data = localStorage.getItem(DB_KEY);
+                if (data) {
+                    db = JSON.parse(data);
+                } else {
+                    db = JSON.parse(JSON.stringify(defaultData));
+                    saveDB();
+                }
+            } catch (e) {
+                console.error('Error loading database:', e);
+                db = JSON.parse(JSON.stringify(defaultData));
+            }
+        }
+
+        async function saveDB() {
+            // Save to cloud if enabled
+            if (isCloudEnabled) {
+                try {
+                    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': API_KEY
+                        },
+                        body: JSON.stringify(db)
+                    });
+                } catch (e) {
+                    console.log('Cloud save failed, saving locally');
+                }
+            }
+            
+            // Always save locally as backup
+            try {
+                localStorage.setItem(DB_KEY, JSON.stringify(db));
+            } catch (e) {
+                console.error('Error saving database:', e);
+            }
+        }
+
+        // ============ UTILITIES ============
+        function generateId(prefix) {
+            const timestamp = Date.now().toString().slice(-6);
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `${prefix}-${timestamp}${random}`;
+        }
+
+        function generateCertificateNumber() {
+            const year = new Date().getFullYear();
+            const certNumber = `CTC/CCR/${db.certificateCounter}/${year}`;
+            db.certificateCounter++;
+            saveDB();
+            return certNumber;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        async function addAuditLog(action, details) {
+            const log = {
+                id: generateId('LOG'),
+                userId: currentUser ? currentUser.id : 'SYSTEM',
+                userName: currentUser ? currentUser.fullName : 'System',
+                action: action,
+                details: details,
+                timestamp: new Date().toISOString()
+            };
+            db.auditLogs.unshift(log);
+            await saveDB();
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function getRoleBadge(role) {
+            const roleClass = {
+                'ADMINISTRATOR': 'role-admin',
+                'REGISTRATION OFFICER': 'role-registrar',
+                'DIRECTOR PLANNING': 'role-director',
+                'CHIEF SOCIAL-ECONOMICAL PLANNER': 'role-planner',
+                'SOCIAL-ECONOMICAL PLANNER': 'role-planner',
+                'ACCOUNTS OFFICER': 'role-accounts'
+            };
+            return `<span class="role-badge ${roleClass[role] || 'role-admin'}">${role}</span>`;
+        }
+
+        function canViewSensitiveData() {
+            return currentUser && (currentUser.role === 'ADMINISTRATOR' || currentUser.role === 'REGISTRATION OFFICER');
+        }
+
+        function canEditClubs() {
+            return currentUser && currentUser.role === 'REGISTRATION OFFICER';
+        }
+
+        function canDeleteData() {
+            return currentUser && currentUser.role === 'ADMINISTRATOR';
+        }
+
+        function canViewAllDistricts() {
+            return currentUser && (currentUser.role === 'ADMINISTRATOR' || currentUser.role === 'DIRECTOR PLANNING' || currentUser.role === 'CHIEF SOCIAL-ECONOMICAL PLANNER');
+        }
+
+        function getVisibleClubs() {
+            if (canViewAllDistricts()) {
+                return db.clubs;
+            }
+            return db.clubs.filter(c => c.district === currentUser.district);
+        }
+
+        // ============ AUTHENTICATION ============
+        function showLoginPage() {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="auth-container">
+                    <div class="auth-card">
+                        <div class="auth-logo">
+                            <div style="font-size: 48px;">🏛️</div>
+                            <h1>Club Registration System</h1>
+                            <p>Institutional Club Management Platform</p>
+                        </div>
+                        <div id="authError"></div>
+                        <form onsubmit="handleLogin(event)">
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" id="loginUsername" placeholder="Enter your username" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                            </div>
+                            <button type="submit" class="btn">Login</button>
+                        </form>
+                        <div class="auth-link">
+                            Don't have an account? <a href="#" onclick="showRegisterPage()">Create Account</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = db.users.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = user;
+                await addAuditLog('USER LOGIN', `${user.fullName} logged in successfully`);
+                showToast('Welcome back, ' + user.fullName + '!');
+                renderApp();
+            } else {
+                document.getElementById('authError').innerHTML = 
+                    '<div class="error-msg">Invalid username or password</div>';
+            }
+        }
+
+        function showRegisterPage() {
+            const app = document.getElementById('app');
+            const districtOptions = db.districtConfigs.map(d => 
+                `<option value="${d.district}">${d.district}</option>`
+            ).join('');
+            
+            app.innerHTML = `
+                <div class="auth-container">
+                    <div class="auth-card" style="max-width: 600px;">
+                        <div class="auth-logo">
+                            <div style="font-size: 48px;">📝</div>
+                            <h1>Create Account</h1>
+                            <p>Register your institution account</p>
+                        </div>
+                        <div id="authError"></div>
+                        <form onsubmit="handleRegister(event)">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="regFullName" placeholder="Enter your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" id="regUsername" placeholder="Choose a username" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" id="regPhone" placeholder="e.g. 0977123456" required>
+                            </div>
+                            <div class="form-group">
+                                <label>District</label>
+                                <select id="regDistrict" onchange="updateLocalAuthority()" required>
+                                    <option value="">Select District</option>
+                                    ${districtOptions}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Local Authority (Auto-assigned)</label>
+                                <input type="text" id="regLocalAuthority" readonly placeholder="Select district to auto-assign" style="background: #f0fdf4; color: #059669; font-weight: 500;">
+                            </div>
+                            <div class="form-group">
+                                <label>User Role</label>
+                                <select id="regRole" required>
+                                    <option value="REGISTRATION OFFICER">Registration Officer</option>
+                                    <option value="DIRECTOR PLANNING">Director Planning</option>
+                                    <option value="CHIEF SOCIAL-ECONOMICAL PLANNER">Chief Social-Economical Planner</option>
+                                    <option value="SOCIAL-ECONOMICAL PLANNER">Social-Economical Planner</option>
+                                    <option value="ACCOUNTS OFFICER">Accounts Officer</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="regPassword" placeholder="Create a password" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <input type="password" id="regConfirmPassword" placeholder="Confirm your password" required>
+                            </div>
+                            <button type="submit" class="btn">Create Account</button>
+                        </form>
+                        <div class="auth-link">
+                            Already have an account? <a href="#" onclick="showLoginPage()">Login</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateLocalAuthority() {
+            const district = document.getElementById('regDistrict').value;
+            const config = db.districtConfigs.find(d => d.district === district);
+            document.getElementById('regLocalAuthority').value = config ? config.localAuthority : '';
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('regFullName').value;
+            const username = document.getElementById('regUsername').value;
+            const phone = document.getElementById('regPhone').value;
+            const district = document.getElementById('regDistrict').value;
+            const localAuthority = document.getElementById('regLocalAuthority').value;
+            const role = document.getElementById('regRole').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                document.getElementById('authError').innerHTML = 
+                    '<div class="error-msg">Passwords do not match</div>';
+                return;
+            }
+
+            if (db.users.find(u => u.username === username)) {
+                document.getElementById('authError').innerHTML = 
+                    '<div class="error-msg">Username already exists</div>';
+                return;
+            }
+
+            const newUser = {
+                id: generateId('USR'),
+                fullName,
+                username,
+                password,
+                phone,
+                district,
+                localAuthority,
+                role,
+                status: 'ACTIVE',
+                createdAt: new Date().toISOString()
+            };
+
+            db.users.push(newUser);
+            await saveDB();
+            currentUser = newUser;
+            await addAuditLog('USER CREATED', `New account created for ${fullName}`);
+            showToast('Account created successfully!');
+            renderApp();
+        }
+
+        // ============ MAIN APP ============
+        function renderApp() {
+            if (!currentUser) {
+                showLoginPage();
+                return;
+            }
+
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <div class="app-container">
+                    <div class="sidebar" id="sidebar">
+                        <div class="sidebar-header">
+                            <h2>${currentUser.localAuthority}</h2>
+                            <p>${db.settings.systemName}</p>
+                            <p style="margin-top: 10px; font-size: 11px;">District: ${currentUser.district}</p>
+                            <p style="font-size: 11px;">User: ${currentUser.fullName}</p>
+                            <p style="font-size: 11px; margin-top: 5px;">${getRoleBadge(currentUser.role)}</p>
+                        </div>
+                        <div id="sidebarMenu"></div>
+                    </div>
+                    <div class="main-content">
+                        <div class="header">
+                            <div class="header-actions">
+                                <div>
+                                    <h1>${getPageTitle()}</h1>
+                                    <p>${getPageDescription()}</p>
+                                </div>
+                                <div class="user-info">
+                                    <div class="avatar">${currentUser.fullName.charAt(0)}</div>
+                                    <div>
+                                        <div style="font-weight: 500; font-size: 14px;">${currentUser.fullName}</div>
+                                        <div style="font-size: 12px; color: #6b7280;">${currentUser.role}</div>
+                                    </div>
+                                    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pageContent"></div>
+                    </div>
+                </div>
+            `;
+
+            renderSidebar();
+            renderPage();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        async function handleLogout() {
+            await addAuditLog('USER LOGOUT', `${currentUser.fullName} logged out`);
+            currentUser = null;
+            showToast('Logged out successfully');
+            showLoginPage();
+        }
+
+        function getPageTitle() {
+            const titles = {
+                'dashboard': 'Dashboard',
+                'register-club': 'Register New Club',
+                'registered-clubs': 'Registered Clubs',
+                'club-details': 'Club Details',
+                'certificates': 'Certificates',
+                'reports': 'Reports',
+                'administration': 'Administration',
+                'security': 'Security',
+                'system': 'System'
+            };
+            return titles[currentPage] || 'Dashboard';
+        }
+
+        function getPageDescription() {
+            const descriptions = {
+                'dashboard': 'Overview of your club registration system',
+                'register-club': 'Register a new club in the system',
+                'registered-clubs': 'View and manage all registered clubs',
+                'club-details': 'View detailed club information',
+                'certificates': 'Generate and manage club certificates',
+                'reports': 'Generate institutional reports',
+                'administration': 'Manage system users and settings',
+                'security': 'System security and audit trail',
+                'system': 'System information and maintenance'
+            };
+            return descriptions[currentPage] || '';
+        }
+
+        function renderSidebar() {
+            const menu = document.getElementById('sidebarMenu');
+            const menuItems = [
+                { section: 'Main', items: [
+                    { label: '📊 Dashboard', page: 'dashboard' }
+                ]},
+                { section: 'Club Registration', items: [
+                    { label: '➕ Register New Club', page: 'register-club' },
+                    { label: '📋 Registered Clubs', page: 'registered-clubs' }
+                ]},
+                { section: 'Certificates', items: [
+                    { label: '🏆 Certificates', page: 'certificates' }
+                ]},
+                { section: 'Reports', items: [
+                    { label: '📈 Reports', page: 'reports' }
+                ]}
+            ];
+
+            // Admin only menu items
+            if (currentUser.role === 'ADMINISTRATOR') {
+                menuItems.push(
+                    { section: 'Administration', items: [
+                        { label: '⚙️ Administration', page: 'administration' }
+                    ]},
+                    { section: 'Security', items: [
+                        { label: '🔒 Security', page: 'security' }
+                    ]},
+                    { section: 'System', items: [
+                        { label: '💻 System', page: 'system' }
+                    ]}
+                );
+            }
+
+            let html = '';
+            menuItems.forEach(group => {
+                html += `<div class="menu-section">${group.section}</div>`;
+                group.items.forEach(item => {
+                    html += `
+                        <div class="menu-item ${currentPage === item.page ? 'active' : ''}" 
+                             onclick="navigateTo('${item.page}')">
+                            ${item.label}
+                        </div>
+                    `;
+                });
+            });
+            menu.innerHTML = html;
+        }
+
+        function navigateTo(page) {
+            currentPage = page;
+            document.getElementById('sidebar').classList.remove('open');
+            renderApp();
+        }
+
+        // ============ PAGES ============
+        function renderPage() {
+            const content = document.getElementById('pageContent');
+            switch(currentPage) {
+                case 'dashboard':
+                    renderDashboard(content);
+                    break;
+                case 'register-club':
+                    renderRegisterClub(content);
+                    break;
+                case 'registered-clubs':
+                    renderRegisteredClubs(content);
+                    break;
+                case 'club-details':
+                    renderClubDetails(content);
+                    break;
+                case 'certificates':
+                    renderCertificates(content);
+                    break;
+                case 'reports':
+                    renderReports(content);
+                    break;
+                case 'administration':
+                    renderAdministration(content);
+                    break;
+                case 'security':
+                    renderSecurity(content);
+                    break;
+                case 'system':
+                    renderSystem(content);
+                    break;
+            }
+        }
+
+        // Dashboard
+        function renderDashboard(content) {
+            const visibleClubs = getVisibleClubs();
+            const totalClubs = visibleClubs.length;
+            const totalMembers = db.members.filter(m => visibleClubs.some(c => c.id === m.clubId)).length;
+            const totalCertificates = visibleClubs.filter(c => c.certificate).length;
+            const totalUsers = db.users.length;
+
+            content.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Clubs</h3>
+                        <div class="value">${totalClubs}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Members</h3>
+                        <div class="value">${totalMembers}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Certificates Issued</h3>
+                        <div class="value">${totalCertificates}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>System Users</h3>
+                        <div class="value">${totalUsers}</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Recent Registrations</div>
+                    ${visibleClubs.length === 0 ? 
+                        '<p style="color: #6b7280;">No clubs registered yet.</p>' :
+                        `<div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Club Name</th>
+                                        <th>Ward</th>
+                                        <th>Village</th>
+                                        <th>Certificate</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${visibleClubs.slice(0, 5).map(club => `
+                                        <tr>
+                                            <td><strong>${club.name}</strong></td>
+                                            <td>${club.ward}</td>
+                                            <td>${club.village}</td>
+                                            <td style="color: #059669; font-weight: 500;">${club.certificate || 'Pending'}</td>
+                                            <td>${formatDate(club.registrationDate)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>`
+                    }
+                </div>
+
+                <div class="card">
+                    <div class="card-title">System Information</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <div style="font-size: 12px; color: #6b7280;">District</div>
+                            <div style="font-weight: 500; margin-top: 5px;">${currentUser.district}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #6b7280;">Local Authority</div>
+                            <div style="font-weight: 500; margin-top: 5px;">${currentUser.localAuthority}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #6b7280;">User Role</div>
+                            <div style="font-weight: 500; margin-top: 5px;">${currentUser.role}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #6b7280;">System Status</div>
+                            <div style="font-weight: 500; margin-top: 5px; color: #059669;">● Online</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Register Club
+        function renderRegisterClub(content) {
+            if (!canEditClubs() && currentUser.role !== 'ADMINISTRATOR') {
+                content.innerHTML = `
+                    <div class="card">
+                        <div class="card-title">Access Denied</div>
+                        <p style="color: #6b7280;">Only Registration Officers and Administrators can register new clubs.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const districtOptions = db.districtConfigs.map(d => 
+                `<option value="${d.district}" ${d.district === currentUser.district ? 'selected' : ''}>${d.district}</option>`
+            ).join('');
+
+            content.innerHTML = `
+                <div class="card" style="max-width: 600px;">
+                    <div class="card-title">Club Registration Form</div>
+                    <form onsubmit="handleClubRegistration(event)">
+                        <div class="form-group">
+                            <label>Club Name</label>
+                            <input type="text" id="clubName" placeholder="e.g. KAPEPULA WOMEN CLUB" required>
+                        </div>
+                        <div class="form-group">
+                            <label>District</label>
+                            <select id="clubDistrict" onchange="updateClubLocalAuthority()" required>
+                                <option value="">Select District</option>
+                                ${districtOptions}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Local Authority (Auto-assigned)</label>
+                            <input type="text" id="clubLocalAuthority" readonly placeholder="Select district to auto-assign" style="background: #f0fdf4; color: #059669; font-weight: 500;">
+                        </div>
+                        <div class="form-group">
+                            <label>Ward</label>
+                            <input type="text" id="clubWard" placeholder="e.g. KAPWEPWE" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Village</label>
+                            <input type="text" id="clubVillage" placeholder="e.g. KAPEPULA" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Proof (PDF or Image)</label>
+                            <div class="file-upload" onclick="document.getElementById('paymentProof').click()">
+                                <div style="font-size: 24px;">📎</div>
+                                <div style="margin-top: 10px;">Click to upload payment proof</div>
+                                <div style="font-size: 12px; color: #6b7280; margin-top: 5px;">PDF, JPG, PNG accepted</div>
+                                <input type="file" id="paymentProof" accept=".pdf,.jpg,.jpeg,.png" onchange="previewFile(this)">
+                            </div>
+                            <div id="filePreview"></div>
+                        </div>
+                        <button type="submit" class="btn">Register Club</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function updateClubLocalAuthority() {
+            const district = document.getElementById('clubDistrict').value;
+            const config = db.districtConfigs.find(d => d.district === district);
+            document.getElementById('clubLocalAuthority').value = config ? config.localAuthority : '';
+        }
+
+        function previewFile(input) {
+            const preview = document.getElementById('filePreview');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <div class="file-preview">
+                            <strong>${file.name}</strong> (${(file.size / 1024).toFixed(1)} KB)
+                            <div style="margin-top: 10px;">
+                                <a href="${e.target.result}" target="_blank" style="color: #059669;">View File</a>
+                            </div>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function handleClubRegistration(e) {
+            e.preventDefault();
+            const name = document.getElementById('clubName').value;
+            const district = document.getElementById('clubDistrict').value;
+            const localAuthority = document.getElementById('clubLocalAuthority').value;
+            const ward = document.getElementById('clubWard').value;
+            const village = document.getElementById('clubVillage').value;
+            const paymentProof = document.getElementById('paymentProof').files[0];
+
+            const certificate = generateCertificateNumber();
+            const newClub = {
+                id: generateId('CLUB'),
+                name: name.toUpperCase(),
+                district,
+                localAuthority,
+                ward: ward.toUpperCase(),
+                village: village.toUpperCase(),
+                certificate,
+                registeredBy: currentUser.id,
+                registeredByName: currentUser.fullName,
+                registrationDate: new Date().toISOString(),
+                createdAt: new Date().toISOString(),
+                paymentProof: paymentProof ? {
+                    name: paymentProof.name,
+                    size: paymentProof.size,
+                    type: paymentProof.type,
+                    data: await readFileAsDataURL(paymentProof)
+                } : null,
+                certificateFile: null,
+                status: 'PENDING_CERTIFICATE'
+            };
+
+            db.clubs.push(newClub);
+            await saveDB();
+            await addAuditLog('CLUB REGISTERED', `Club ${newClub.name} registered with certificate ${certificate}`);
+            showToast('Club registered successfully! Certificate: ' + certificate);
+            currentPage = 'registered-clubs';
+            renderApp();
+        }
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Registered Clubs
+        function renderRegisteredClubs(content) {
+            const visibleClubs = getVisibleClubs();
+            
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-title">All Registered Clubs</div>
+                    ${visibleClubs.length === 0 ? 
+                        '<p style="color: #6b7280;">No clubs registered yet.</p>' :
+                        `<div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Club Name</th>
+                                        <th>Ward</th>
+                                        <th>Village</th>
+                                        <th>Certificate</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${visibleClubs.map(club => `
+                                        <tr>
+                                            <td><strong>${club.name}</strong></td>
+                                            <td>${club.ward}</td>
+                                            <td>${club.village}</td>
+                                            <td style="color: #059669; font-weight: 500;">${club.certificate || 'Pending'}</td>
+                                            <td>
+                                                <span style="color: ${club.status === 'CERTIFIED' ? '#059669' : '#d97706'};">
+                                                    ${club.status === 'CERTIFIED' ? '✓ Certified' : '⏳ Pending'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-secondary btn-sm" style="margin-right: 5px;" onclick="viewClub('${club.id}')">View</button>
+                                                ${canEditClubs() ? `
+                                                    <button class="btn btn-secondary btn-sm" style="margin-right: 5px;" onclick="editClub('${club.id}')">Edit</button>
+                                                ` : ''}
+                                                ${canDeleteData() ? `
+                                                    <button class="btn btn-danger btn-sm" onclick="deleteClub('${club.id}')">Delete</button>
+                                                ` : ''}
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>`
+                    }
+                </div>
+            `;
+        }
+
+        function viewClub(clubId) {
+            const club = db.clubs.find(c => c.id === clubId);
+            if (!club) return;
+
+            const clubMembers = db.members.filter(m => m.clubId === clubId);
+            const showSensitive = canViewSensitiveData();
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>${club.name}</h2>
+                    <div style="margin-bottom: 20px;">
+                        <p><strong>Certificate:</strong> ${club.certificate || 'Pending'}</p>
+                        <p><strong>District:</strong> ${club.district}</p>
+                        <p><strong>Local Authority:</strong> ${club.localAuthority}</p>
+                        <p><strong>Ward:</strong> ${club.ward}</p>
+                        <p><strong>Village:</strong> ${club.village}</p>
+                        <p><strong>Registered By:</strong> ${club.registeredByName}</p>
+                        <p><strong>Registration Date:</strong> ${formatDate(club.registrationDate)}</p>
+                        <p><strong>Status:</strong> <span style="color: ${club.status === 'CERTIFIED' ? '#059669' : '#d97706'};">${club.status === 'CERTIFIED' ? '✓ Certified' : '⏳ Pending'}</span></p>
+                        ${club.paymentProof ? `
+                            <p><strong>Payment Proof:</strong> 
+                                <a href="${club.paymentProof.data}" download="${club.paymentProof.name}" style="color: #059669;">Download</a>
+                            </p>
+                        ` : ''}
+                        ${club.certificateFile ? `
+                            <p><strong>Certificate File:</strong> 
+                                <a href="${club.certificateFile.data}" download="${club.certificateFile.name}" style="color: #059669;">Download</a>
+                            </p>
+                        ` : ''}
+                    </div>
+                    <div class="card-title">Members (${clubMembers.length})</div>
+                    ${clubMembers.length === 0 ? 
+                        '<p style="color: #6b7280; margin-bottom: 15px;">No members added yet.</p>' :
+                        `<div class="table-container" style="margin-bottom: 15px;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        ${showSensitive ? '<th>NRC</th><th>DOB</th>' : ''}
+                                        <th>Phone</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${clubMembers.map(member => `
+                                        <tr>
+                                            <td>${member.name}</td>
+                                            <td>${member.position}</td>
+                                            ${showSensitive ? `<td>${member.nrc}</td><td>${formatDate(member.dateOfBirth)}</td>` : ''}
+                                            <td>${member.phone}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>`
+                    }
+                    ${canEditClubs() ? `
+                        <button class="btn btn-secondary" onclick="showAddMemberForm('${clubId}')">Add Member</button>
+                    ` : ''}
+                    <div class="modal-actions">
+                        <button class="btn" onclick="closeModal()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function editClub(clubId) {
+            const club = db.clubs.find(c => c.id === clubId);
+            if (!club) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>Edit Club: ${club.name}</h2>
+                    <form onsubmit="handleEditClub(event, '${clubId}')">
+                        <div class="form-group">
+                            <label>Club Name</label>
+                            <input type="text" id="editClubName" value="${club.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Ward</label>
+                            <input type="text" id="editClubWard" value="${club.ward}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Village</label>
+                            <input type="text" id="editClubVillage" value="${club.village}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Certificate Number</label>
+                            <input type="text" id="editCertificate" value="${club.certificate || ''}" placeholder="Enter certificate number">
+                        </div>
+                        <div class="form-group">
+                            <label>Certificate File (PDF or Image)</label>
+                            <div class="file-upload" onclick="document.getElementById('certificateFile').click()">
+                                <div style="font-size: 24px;">📄</div>
+                                <div style="margin-top: 10px;">Click to upload certificate</div>
+                                <div style="font-size: 12px; color: #6b7280; margin-top: 5px;">PDF, JPG, PNG accepted</div>
+                                <input type="file" id="certificateFile" accept=".pdf,.jpg,.jpeg,.png" onchange="previewCertificateFile(this)">
+                            </div>
+                            <div id="certificatePreview"></div>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="submit" class="btn">Save Changes</button>
+                            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function previewCertificateFile(input) {
+            const preview = document.getElementById('certificatePreview');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                preview.innerHTML = `
+                    <div class="file-preview">
+                        <strong>${file.name}</strong> (${(file.size / 1024).toFixed(1)} KB)
+                    </div>
+                `;
+            }
+        }
+
+        async function handleEditClub(e, clubId) {
+            e.preventDefault();
+            const club = db.clubs.find(c => c.id === clubId);
+            if (!club) return;
+
+            club.name = document.getElementById('editClubName').value.toUpperCase();
+            club.ward = document.getElementById('editClubWard').value.toUpperCase();
+            club.village = document.getElementById('editClubVillage').value.toUpperCase();
+            
+            const certNumber = document.getElementById('editCertificate').value;
+            if (certNumber) {
+                club.certificate = certNumber;
+            }
+            
+            const certFile = document.getElementById('certificateFile').files[0];
+            if (certFile) {
+                club.certificateFile = {
+                    name: certFile.name,
+                    size: certFile.size,
+                    type: certFile.type,
+                    data: await readFileAsDataURL(certFile)
+                };
+                club.status = 'CERTIFIED';
+            }
+
+            await saveDB();
+            await addAuditLog('CLUB EDITED', `Club ${club.name} information updated by ${currentUser.fullName}`);
+            showToast('Club information updated successfully!');
+            closeModal();
+            renderApp();
+        }
+
+        function showAddMemberForm(clubId) {
+            const modal = document.querySelector('.modal');
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>Add Member</h2>
+                    <form onsubmit="handleAddMember(event, '${clubId}')">
+                        <div class="form-group">
+                            <label>Member Name</label>
+                            <input type="text" id="memberName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Position</label>
+                            <select id="memberPosition" required>
+                                <option value="CHAIRPERSON">Chairperson</option>
+                                <option value="VICE CHAIRPERSON">Vice Chairperson</option>
+                                <option value="SECRETARY">Secretary</option>
+                                <option value="TREASURER">Treasurer</option>
+                                <option value="MEMBER">Member</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>NRC</label>
+                            <input type="text" id="memberNrc" placeholder="e.g. 123456/78/1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input type="date" id="memberDob" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="memberPhone" placeholder="e.g. 0977123456" required>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="submit" class="btn">Add Member</button>
+                            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        async function handleAddMember(e, clubId) {
+            e.preventDefault();
+            const name = document.getElementById('memberName').value;
+            const position = document.getElementById('memberPosition').value;
+            const nrc = document.getElementById('memberNrc').value;
+            const dateOfBirth = document.getElementById('memberDob').value;
+            const phone = document.getElementById('memberPhone').value;
+
+            const newMember = {
+                id: generateId('MEM'),
+                clubId,
+                name: name.toUpperCase(),
+                position,
+                nrc,
+                dateOfBirth,
+                phone
+            };
+
+            db.members.push(newMember);
+            await saveDB();
+            await addAuditLog('MEMBER ADDED', `Member ${newMember.name} added to club`);
+            showToast('Member added successfully!');
+            closeModal();
+            renderApp();
+        }
+
+        async function deleteClub(clubId) {
+            if (confirm('Are you sure you want to delete this club? This action cannot be undone.')) {
+                const club = db.clubs.find(c => c.id === clubId);
+                db.clubs = db.clubs.filter(c => c.id !== clubId);
+                db.members = db.members.filter(m => m.clubId !== clubId);
+                await saveDB();
+                await addAuditLog('CLUB DELETED', `Club ${club.name} deleted by ${currentUser.fullName}`);
+                showToast('Club deleted successfully');
+                renderApp();
+            }
+        }
+
+        function closeModal() {
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        }
+
+        // Certificates
+        function renderCertificates(content) {
+            const visibleClubs = getVisibleClubs();
+            
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-title">Certificate Register</div>
+                    ${visibleClubs.length === 0 ? 
+                        '<p style="color: #6b7280;">No certificates issued yet.</p>' :
+                        `<div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Club Name</th>
+                                        <th>Certificate No.</th>
+                                        <th>District</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${visibleClubs.map(club => `
+                                        <tr>
+                                            <td><strong>${club.name}</strong></td>
+                                            <td style="color: #059669; font-weight: 500;">${club.certificate || 'Pending'}</td>
+                                            <td>${club.district}</td>
+                                            <td>
+                                                <span style="color: ${club.status === 'CERTIFIED' ? '#059669' : '#d97706'};">
+                                                    ${club.status === 'CERTIFIED' ? '✓ Certified' : '⏳ Pending'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-secondary btn-sm" style="margin-right: 5px;" onclick="printCertificate('${club.id}')">Print</button>
+                                                ${canEditClubs() ? `
+                                                    <button class="btn btn-secondary btn-sm" onclick="editClub('${club.id}')">Update</button>
+                                                ` : ''}
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>`
+                    }
+                </div>
+            `;
+        }
+
+        function printCertificate(clubId) {
+            const club = db.clubs.find(c => c.id === clubId);
+            if (!club) return;
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Certificate - ${club.name}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 40px; }
+                        .certificate {
+                            border: 3px solid #059669;
+                            padding: 40px;
+                            text-align: center;
+                            max-width: 800px;
+                            margin: 0 auto;
+                        }
+                        h1 { color: #064e3b; font-size: 28px; }
+                        h2 { color: #059669; font-size: 24px; margin: 20px 0; }
+                        .details { margin: 30px 0; font-size: 16px; }
+                        .footer { margin-top: 50px; font-size: 14px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="certificate">
+                        <h1>${club.localAuthority}</h1>
+                        <h2>CERTIFICATE OF REGISTRATION</h2>
+                        <p>This is to certify that</p>
+                        <h2>${club.name}</h2>
+                        <p>has been officially registered as a club</p>
+                        <div class="details">
+                            <p><strong>Certificate Number:</strong> ${club.certificate || 'Pending'}</p>
+                            <p><strong>District:</strong> ${club.district}</p>
+                            <p><strong>Ward:</strong> ${club.ward}</p>
+                            <p><strong>Village:</strong> ${club.village}</p>
+                            <p><strong>Registration Date:</strong> ${formatDate(club.registrationDate)}</p>
+                        </div>
+                        <div class="footer">
+                            <p>Registered By: ${club.registeredByName}</p>
+                            <p>${club.localAuthority}</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Reports
+        function renderReports(content) {
+            const visibleClubs = getVisibleClubs();
+            const visibleMembers = db.members.filter(m => visibleClubs.some(c => c.id === m.clubId));
+            
+            content.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Clubs</h3>
+                        <div class="value">${visibleClubs.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Members</h3>
+                        <div class="value">${visibleMembers.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Certificates</h3>
+                        <div class="value">${visibleClubs.filter(c => c.certificate).length}</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Generate Reports</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <button class="btn btn-secondary" onclick="generateReport('clubs')">📋 Club Register</button>
+                        <button class="btn btn-secondary" onclick="generateReport('members')">👥 Members Register</button>
+                        <button class="btn btn-secondary" onclick="generateReport('wards')">📍 Clubs by Ward</button>
+                        <button class="btn btn-secondary" onclick="generateReport('villages')">🏘️ Clubs by Village</button>
+                        <button class="btn btn-secondary" onclick="generateReport('certificates')">🏆 Certificate Report</button>
+                    </div>
+                </div>
+
+                <div id="reportOutput"></div>
+            `;
+        }
+
+        function generateReport(type) {
+            const output = document.getElementById('reportOutput');
+            const visibleClubs = getVisibleClubs();
+            const showSensitive = canViewSensitiveData();
+            let html = '<div class="card"><div class="card-title">Report Output</div>';
+
+            if (type === 'clubs') {
+                html += `<div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Club Name</th>
+                                <th>Ward</th>
+                                <th>Village</th>
+                                <th>Certificate</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${visibleClubs.map(club => `
+                                <tr>
+                                    <td>${club.name}</td>
+                                    <td>${club.ward}</td>
+                                    <td>${club.village}</td>
+                                    <td>${club.certificate || 'Pending'}</td>
+                                    <td>${formatDate(club.registrationDate)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+            } else if (type === 'members') {
+                const visibleMembers = db.members.filter(m => visibleClubs.some(c => c.id === m.clubId));
+                html += `<div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Member Name</th>
+                                <th>Club</th>
+                                <th>Position</th>
+                                ${showSensitive ? '<th>NRC</th><th>DOB</th>' : ''}
+                                <th>Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${visibleMembers.map(member => {
+                                const club = visibleClubs.find(c => c.id === member.clubId);
+                                return `
+                                    <tr>
+                                        <td>${member.name}</td>
+                                        <td>${club ? club.name : 'Unknown'}</td>
+                                        <td>${member.position}</td>
+                                        ${showSensitive ? `<td>${member.nrc}</td><td>${formatDate(member.dateOfBirth)}</td>` : ''}
+                                        <td>${member.phone}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+            } else if (type === 'wards') {
+                const wards = {};
+                visibleClubs.forEach(club => {
+                    if (!wards[club.ward]) wards[club.ward] = [];
+                    wards[club.ward].push(club);
+                });
+                html += Object.keys(wards).map(ward => `
+                    <h3 style="margin: 15px 0 10px;">${ward}</h3>
+                    <p>${wards[ward].length} club(s)</p>
+                `).join('');
+            } else if (type === 'villages') {
+                const villages = {};
+                visibleClubs.forEach(club => {
+                    if (!villages[club.village]) villages[club.village] = [];
+                    villages[club.village].push(club);
+                });
+                html += Object.keys(villages).map(village => `
+                    <h3 style="margin: 15px 0 10px;">${village}</h3>
+                    <p>${villages[village].length} club(s)</p>
+                `).join('');
+            } else if (type === 'certificates') {
+                html += `<div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Club Name</th>
+                                <th>Certificate No.</th>
+                                <th>Status</th>
+                                <th>Date Issued</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${visibleClubs.map(club => `
+                                <tr>
+                                    <td>${club.name}</td>
+                                    <td>${club.certificate || 'Pending'}</td>
+                                    <td>${club.status === 'CERTIFIED' ? '✓ Certified' : '⏳ Pending'}</td>
+                                    <td>${formatDate(club.registrationDate)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+            }
+
+            html += '</div>';
+            output.innerHTML = html;
+        }
+
+        // Administration (Admin only)
+        function renderAdministration(content) {
+            if (currentUser.role !== 'ADMINISTRATOR') {
+                content.innerHTML = `
+                    <div class="card">
+                        <div class="card-title">Access Denied</div>
+                        <p style="color: #6b7280;">Only Administrators can access this page.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-title">System Users</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>District</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${db.users.map(user => `
+                                    <tr>
+                                        <td><strong>${user.fullName}</strong></td>
+                                        <td>${user.username}</td>
+                                        <td>${getRoleBadge(user.role)}</td>
+                                        <td>${user.district}</td>
+                                        <td><span style="color: #059669;">● ${user.status}</span></td>
+                                        <td>
+                                            ${user.id !== currentUser.id ? `
+                                                <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')">Delete</button>
+                                            ` : ''}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">District Configuration</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>District</th>
+                                    <th>Local Authority</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${db.districtConfigs.map(config => `
+                                    <tr>
+                                        <td><strong>${config.district}</strong></td>
+                                        <td>${config.localAuthority}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">System Settings</div>
+                    <div class="form-group">
+                        <label>System Name</label>
+                        <input type="text" id="systemName" value="${db.settings.systemName}" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px;">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="allowRegistration" ${db.settings.allowRegistration ? 'checked' : ''} style="margin-right: 10px;">
+                            Allow Club Registration
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="requirePaymentProof" ${db.settings.requirePaymentProof ? 'checked' : ''} style="margin-right: 10px;">
+                            Require Payment Proof
+                        </label>
+                    </div>
+                    <button class="btn" onclick="saveSettings()">Save Settings</button>
+                </div>
+            `;
+        }
+
+        async function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                const user = db.users.find(u => u.id === userId);
+                db.users = db.users.filter(u => u.id !== userId);
+                await saveDB();
+                await addAuditLog('USER DELETED', `User ${user.fullName} deleted by ${currentUser.fullName}`);
+                showToast('User deleted successfully');
+                renderApp();
+            }
+        }
+
+        async function saveSettings() {
+            db.settings.systemName = document.getElementById('systemName').value;
+            db.settings.allowRegistration = document.getElementById('allowRegistration').checked;
+            db.settings.requirePaymentProof = document.getElementById('requirePaymentProof').checked;
+            await saveDB();
+            await addAuditLog('SETTINGS UPDATED', `System settings updated by ${currentUser.fullName}`);
+            showToast('Settings saved successfully!');
+            renderApp();
+        }
+
+        // Security (Admin only)
+        function renderSecurity(content) {
+            if (currentUser.role !== 'ADMINISTRATOR') {
+                content.innerHTML = `
+                    <div class="card">
+                        <div class="card-title">Access Denied</div>
+                        <p style="color: #6b7280;">Only Administrators can access this page.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-title">Change Password</div>
+                    <form onsubmit="handlePasswordChange(event)" style="max-width: 400px;">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" id="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" id="confirmNewPassword" required>
+                        </div>
+                        <button type="submit" class="btn">Change Password</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Activity / Audit Log</div>
+                    ${db.auditLogs.length === 0 ? 
+                        '<p style="color: #6b7280;">No activity recorded yet.</p>' :
+                        `<div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date/Time</th>
+                                        <th>User</th>
+                                        <th>Action</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${db.auditLogs.slice(0, 20).map(log => `
+                                        <tr>
+                                            <td>${formatDateTime(log.timestamp)}</td>
+                                            <td>${log.userName}</td>
+                                            <td><strong>${log.action}</strong></td>
+                                            <td>${log.details}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>`
+                    }
+                </div>
+            `;
+        }
+
+        async function handlePasswordChange(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            if (currentPassword !== currentUser.password) {
+                showToast('Current password is incorrect', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                showToast('New passwords do not match', 'error');
+                return;
+            }
+
+            currentUser.password = newPassword;
+            const userIndex = db.users.findIndex(u => u.id === currentUser.id);
+            db.users[userIndex].password = newPassword;
+            await saveDB();
+            await addAuditLog('PASSWORD CHANGED', `Password changed for ${currentUser.fullName}`);
+            showToast('Password changed successfully!');
+            renderApp();
+        }
+
+        // System (Admin only)
+        function renderSystem(content) {
+            if (currentUser.role !== 'ADMINISTRATOR') {
+                content.innerHTML = `
+                    <div class="card">
+                        <div class="card-title">Access Denied</div>
+                        <p style="color: #6b7280;">Only Administrators can access this page.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            content.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>System Version</h3>
+                        <div class="value" style="font-size: 20px;">1.0.0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Database Status</h3>
+                        <div class="value" style="font-size: 20px; color: #059669;">● Connected</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Records</h3>
+                        <div class="value">${db.clubs.length + db.members.length + db.users.length}</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Database Management</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <button class="btn btn-secondary" onclick="backupDatabase()">💾 Backup Database</button>
+                        <button class="btn btn-secondary" onclick="restoreDatabase()">📥 Restore Database</button>
+                        <button class="btn btn-danger" onclick="resetDatabase()">🗑️ Reset Database</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">System Information</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <div style="font-size: 12px; color: #6b7280;">Application</div>
+                            <div style="font-weight: 500; margin-top: 5px;">Club Registration System</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #6b7280;">Version</div>
+                            <div style="font-weight: 500; margin-top: 5px;">1.0.0</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #6b7280;">Storage</div>
+                            <div style="font-weight: 500; margin-top: 5px;">${isCloudEnabled ? 'Cloud + Local' : 'Local Browser Storage'}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #6b7280;">Last Backup</div>
+                            <div style="font-weight: 500; margin-top: 5px;">${localStorage.getItem('lastBackup') || 'Never'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function backupDatabase() {
+            const data = JSON.stringify(db, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `club_registration_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            localStorage.setItem('lastBackup', new Date().toLocaleString());
+            addAuditLog('DATABASE BACKUP', `Database backup created by ${currentUser.fullName}`);
+            showToast('Database backup downloaded successfully!');
+        }
+
+        function restoreDatabase() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (confirm('This will replace all current data. Continue?')) {
+                            db = data;
+                            await saveDB();
+                            await addAuditLog('DATABASE RESTORED', `Database restored by ${currentUser.fullName}`);
+                            showToast('Database restored successfully!');
+                            renderApp();
+                        }
+                    } catch (err) {
+                        showToast('Invalid backup file', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        async function resetDatabase() {
+            if (confirm('⚠️ WARNING: This will delete ALL data and reset the system to default. This action cannot be undone. Continue?')) {
+                db = JSON.parse(JSON.stringify(defaultData));
+                await saveDB();
+                currentUser = null;
+                showToast('System reset to default settings');
+                showLoginPage();
+            }
+        }
+
+        // ============ INITIALIZE ============
+        async function init() {
+            await loadDB();
+            
+            // Check if user is already logged in
+            const savedSession = localStorage.getItem('currentSession');
+            if (savedSession) {
+                const user = db.users.find(u => u.id === savedSession);
+                if (user) {
+                    currentUser = user;
+                }
+            }
+
+            renderApp();
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>
